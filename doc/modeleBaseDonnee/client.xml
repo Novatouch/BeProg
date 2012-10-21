@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<client>
+	<rootPath></rootPath>
+	<local>
+		<folder id="">
+		<name></name>
+		<date></date>
+		<path></path>
+		<share>
+			<user></user>
+		</share>
+		<file id="">
+			<name></name>
+			<size></size>
+			<sha1></sha1>
+			<date></date>
+			<path></path>
+			<share>
+				<user></user>
+			</share>
+			
+		</file>
+	
+	</local>
+	<share>
+	</share>
+</client>
