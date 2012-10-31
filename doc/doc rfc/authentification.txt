@@ -36,3 +36,8 @@
 	<type>auth</type> 
 	<status>denied</status> 
 </message>
+
+<message> 
+	<type>error</type> 
+	<status>auth</status> 
+</message>
