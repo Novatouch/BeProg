@@ -1,0 +1,17 @@
+<message> 
+	<user>identidiant utilisateur</user>
+	<sessionid></sessionid>
+	<type>synchronization</type> 
+	<status>request</status> 
+</message>
+
+
+<message> 
+	<type>synchronization</type> 
+	<status>answer</status> 
+	<info>
+		<size></size>
+	</info>
+</message>
+
+

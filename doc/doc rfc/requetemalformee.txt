@@ -1,0 +1,14 @@
+<message> 
+	<user>identifiant utilisateur</user>
+	<sessionid>any</sessionid>
+	<type> « authenticated request »</type> 
+	<status> « any kind »</status>
+</message>
+
+
+<message> 
+	<type>error</type> 
+	<status>malformed</status>
+</message>
+
+
