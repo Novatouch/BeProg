@@ -1,0 +1,36 @@
+<message> 
+	<user>identidiant utilisateur</user>
+	<sessionid></sessionid>
+	<type>erase</type> 
+	<status>prepare</status>
+	<info>
+		<name></name>
+		<id></id>
+		<size></size>
+		<sha1></sha1>
+		<date></date>
+	</info>
+</message>
+
+
+<message> 
+
+	<type>erase</type> 
+	<status>ready</status>
+</message>
+
+<message> 
+
+	<type>erase</type> 
+	<status>ready</status>
+</message>
+
+
+
+<message> 
+
+	<type>erase</type> 
+	<status>commit</status>
+</message>
+
+

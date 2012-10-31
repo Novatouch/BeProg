@@ -1,0 +1,32 @@
+<message> 
+	<user>identidiant utilisateur</user>
+	<sessionid></sessionid>
+	<type>upload</type> 
+	<status>prepare</status>
+	<info>
+		<name></name>
+		<size></size>
+		<sha1></sha1>
+		<date></date>
+		<path></path>
+	</info>
+</message>
+
+
+<message> 
+
+	<type>upload</type> 
+	<status>prepared</status>
+</message>
+
+
+File binary
+
+
+<message> 
+
+	<type>upload</type> 
+	<status>commit</status>
+</message>
+
+
