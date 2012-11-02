@@ -1,7 +1,7 @@
 <message> 
 	<user>identidiant utilisateur</user>
 	<sessionid></sessionid>
-	<type>erase</type> 
+	<type>modify</type> 
 	<status>prepare</status>
 	<info>
 		<name></name>
@@ -19,17 +19,13 @@
 	<status>ready</status>
 </message>
 
-<message> 
-
-	<type>erase</type> 
-	<status>ready</status>
-</message>
+binary file
 
 
 
 <message> 
 
-	<type>erase</type> 
+	<type>modify</type> 
 	<status>commit</status>
 </message>
 
