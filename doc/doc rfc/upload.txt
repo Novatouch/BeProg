@@ -13,8 +13,7 @@
 </message>
 
 
-<message> 
-
+<message>
 	<type>upload</type> 
 	<status>prepared</status>
 </message>
@@ -30,3 +29,8 @@ File binary
 </message>
 
 
+<message> 
+
+	<type>upload</type> 
+	<status>rollback</status>
+</message>
