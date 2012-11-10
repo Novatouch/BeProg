@@ -14,8 +14,7 @@
 
 
 <message> 
-
-	<type>erase</type> 
+	<type>modify</type> 
 	<status>ready</status>
 </message>
 
@@ -29,4 +28,81 @@ binary file
 	<status>commit</status>
 </message>
 
+
+***********************************************
+
+
+<message> 
+	<user>identidiant utilisateur</user>
+	<sessionid></sessionid>
+	<type>modify</type> 
+	<status>prepare</status>
+	<info>
+		<name></name>
+		<id></id>
+		<size></size>
+		<sha1></sha1>
+		<date></date>
+	</info>
+</message>
+
+
+<message> 
+
+	<type>modify</type> 
+	<status>ready</status>
+</message>
+
+binary file
+
+
+
+<message> 
+
+	<type>modify</type> 
+	<status>rollback</status>
+</message>
+
+*******************************************************************
+<message> 
+	<user>identidiant utilisateur</user>
+	<sessionid></sessionid>
+	<type>modify</type> 
+	<status>prepare</status>
+	<info>
+		<name></name>
+		<id></id>
+		<size></size>
+		<sha1></sha1>
+		<date></date>
+	</info>
+</message>
+
+<message> 
+
+	<type>modify</type> 
+	<status>nofile</status>
+</message>
+
+****************************************************************
+
+<message> 
+	<user>identidiant utilisateur</user>
+	<sessionid></sessionid>
+	<type>modify</type> 
+	<status>prepare</status>
+	<info>
+		<name></name>
+		<id></id>
+		<size></size>
+		<sha1></sha1>
+		<date></date>
+	</info>
+</message>
+
+<message> 
+
+	<type>modify</type> 
+	<status>noright</status>
+</message>
 
