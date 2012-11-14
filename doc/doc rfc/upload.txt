@@ -16,6 +16,9 @@
 <message>
 	<type>upload</type> 
 	<status>prepared</status>
+	<info>
+		<fileid> </fileid>	
+	</info>
 </message>
 
 
@@ -26,9 +29,6 @@ File binary
 
 	<type>upload</type> 
 	<status>commit</status>
-	<info>
-		<fileid> </fileid>	
-	</info>
 </message>
 
 
