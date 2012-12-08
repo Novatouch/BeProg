@@ -9,7 +9,7 @@
 int initialisationConfiguration(char *chemin)
 {
 }
-
+x
 /*
 	auteur : 
 	but : 
