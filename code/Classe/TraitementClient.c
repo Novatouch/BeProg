@@ -7,8 +7,9 @@
 #include <dirent.h>
 #include <string.h>
 #include <time.h>
+//, essayer de faire l'enregistrement sous formes de structure Directory avec (nom,nbOctet,Date)
 
-void parcours(char *nom, FILE* fichier)
+void parcours(char *nom, FILE* fichier) // fonction récursive de parcours d'arborescence prend en paramètre un chemin d'arbo sur un dossier (avec droits en lecture)
 {
   int cpt=0;
   char next[2000];
@@ -31,24 +32,24 @@ void parcours(char *nom, FILE* fichier)
       perror("Stat fich->d_name");
       exit(3);
     }
-    if(S_ISREG(pinfos.st_mode))
+    if(S_ISREG(pinfos.st_mode)) // sur les fichiers
     {
       printf("%-30s %30d octets %s\n",next,(int)pinfos.st_size,ctime(&pinfos.st_mtime));
-    fprintf(fichier, "%-30s %30d octets %s\n",next,(int)pinfos.st_size,ctime(&pinfos.st_mtime));
+    fprintf(fichier, "%-30s %30d octets %s\n",next,(int)pinfos.st_size,ctime(&pinfos.st_mtime)); // enrg fichiers
       cpt+=(int)pinfos.st_size;
     }
-    if(S_ISDIR(pinfos.st_mode)&&strcmp(fich->d_name,".")&&strcmp(fich->d_name,".."))
+    if(S_ISDIR(pinfos.st_mode)&&strcmp(fich->d_name,".")&&strcmp(fich->d_name,"..")) // sur les dossiers
     {
       parcours(next, fichier);
     }
   }
   printf("Total %-30s %30d octets %s\n",nom,cpt,ctime(&pinfos.st_mtime));
-  fprintf(fichier, "Total %-30s %30d octets %s\n",nom,cpt,ctime(&pinfos.st_mtime));
+  fprintf(fichier, "Total %-30s %30d octets %s\n",nom,cpt,ctime(&pinfos.st_mtime)); // enrg dossiers
   closedir(rep);
   
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv[]) // main de test à transformer en fonction EnregistrerArbo
 {
   /*if(argc!=2)
   {
@@ -59,8 +60,7 @@ int main(int argc, char *argv[])
   FILE* fichier = NULL; // Fichier pour enregistrer l'arborescence
 
   fichier = fopen("base.txt", "w+"); // Enregistrer l'arborescence dans le fichier base.txt
-
-	parcours("/home/quighi/Documents/Test", fichier);
+  parcours("/home/quighi/Documents/Test", fichier);
   fclose(fichier);
   return 0;
 }
