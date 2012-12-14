@@ -3,7 +3,7 @@
 
 /* Client.h */
 
-struct client_client {
+struct config_client {
 	unsigned long idUtilisateur;
 	unsigned char compteurSynchronisation;
 	int idSession;
