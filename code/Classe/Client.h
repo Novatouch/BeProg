@@ -1,5 +1,6 @@
 #ifndef H_CLIENT
 #define H_CLIENT
+#include "ConnexionClient.h"
 
 /* Client.h */
 
@@ -9,7 +10,7 @@ struct config_client {
 	int idSession;
 	char *cheminRepertoireConfig;
 	char *cheminRpertoireClient;
-} config_client;
+}config_client;
 
 int initialisationConfiguration(char *chemin);
 int authentificationAvecServeur(config_client *configClient, config_connex *configConexion);

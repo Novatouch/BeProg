@@ -1,3 +1,5 @@
+#include "Client.h"
+#include "ConnexionClient.h"
 /*
 	auteur : 
 	but : 
@@ -8,6 +10,7 @@
 
 int initialisationConfiguration(char *chemin)
 {
+	return 0;
 }
 
 /*
@@ -18,8 +21,9 @@ int initialisationConfiguration(char *chemin)
 
 */
 
-int authentificationAvecServeur(config_client *configClient,config_connex *configConexion)
+int authentificationAvecServeur(struct config_client *configClient, struct config_connex *configConexion)
 {
+	return 0;
 }
 
 /*
@@ -30,8 +34,9 @@ int authentificationAvecServeur(config_client *configClient,config_connex *confi
 
 */
 
-int surveillerMessagePushServeur(config_client *configClient, config_connex *configConexion)
+int surveillerMessagePushServeur(struct config_client *configClient, struct config_connex *configConexion)
 {
+	return 0;
 }
 
 /*
@@ -42,8 +47,9 @@ int surveillerMessagePushServeur(config_client *configClient, config_connex *con
 
 */
 
-int deconnexionServeur(config_client *configClient, config_connex *configConexion)
+int deconnexionServeur(struct config_client *configClient, struct config_connex *configConexion)
 {
+	return 0;
 }
 
 
@@ -55,8 +61,9 @@ int deconnexionServeur(config_client *configClient, config_connex *configConexio
 
 */
 
-int synchroniserAvecServeur(config_client *configClient, config_connex *configConexion)
+int synchroniserAvecServeur(struct config_client *configClient, struct config_connex *configConexion)
 {
+	return 0;
 }
 
 /*
@@ -67,8 +74,9 @@ int synchroniserAvecServeur(config_client *configClient, config_connex *configCo
 
 */
 
-int creationFichier(config_client *configClient, config_connex *configConexion)
+int creationFichier(struct config_client *configClient, struct config_connex *configConexion)
 {
+	return 0;
 }
 
 /*
@@ -79,8 +87,10 @@ int creationFichier(config_client *configClient, config_connex *configConexion)
 
 */
 
-int suppressionFichier(config_client *configClient, config_connex *configConexion)
-
+int suppressionFichier(struct config_client *configClient, struct config_connex *configConexion)
+{
+	return 0;		
+}
 /*
 	auteur : 
 	but : 
@@ -89,8 +99,9 @@ int suppressionFichier(config_client *configClient, config_connex *configConexio
 
 */
 
-int recuperationFichier(config_client *configClient, config_connex *configConexion)
+int recuperationFichier(struct config_client *configClient, struct config_connex *configConexion)
 {
+	return 0;
 }
 
 /*
@@ -101,6 +112,7 @@ int recuperationFichier(config_client *configClient, config_connex *configConexi
 
 */
 
-int miseAJourFichier(config_client *configClient, config_connex *configConexion)
+int miseAJourFichier(struct config_client *configClient, struct config_connex *configConexion)
 {
+	return 0;
 }
