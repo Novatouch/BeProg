@@ -10,7 +10,7 @@
 #include "TraitementClient.h"
 
 /*
-  auteur : Lloret
+	auteur : Lloret
 	but : crée le fichier
 	paramètres : nom du chemin du fichier
 	renvoi : //
@@ -70,7 +70,7 @@ void supprimerDossier(char nom[100]) {
 
 */
 
-void parcours(char *nom, FILE* fichier) 
+void parcoursClient(char *nom, FILE* fichier) 
 {
   int cpt=0;
   char next[2000];
@@ -101,7 +101,7 @@ void parcours(char *nom, FILE* fichier)
     }
     if(S_ISDIR(pinfos.st_mode)&&strcmp(fich->d_name,".")&&strcmp(fich->d_name,"..")) // sur les dossiers
     {
-      parcours(next, fichier);
+      parcoursClient(next, fichier);
     }
   }
   printf("%s %d %s\n",nom,cpt,ctime(&pinfos.st_mtime));
@@ -118,13 +118,13 @@ void parcours(char *nom, FILE* fichier)
 
 */
 
-void enregistrerBase(char *nom)
+void enregistrerBaseClient(char *nom)
 {
 
   FILE* fichier = NULL; // Fichier pour enregistrer l'arborescence
   remove(nom);
   fichier = fopen("baseClient.txt", "w+"); // Enregistrer l'arborescence dans le fichier base.txt
-  parcours(nom, fichier);
+  parcoursClient(nom, fichier);
   fclose(fichier);
 
 }
@@ -340,7 +340,7 @@ int comparerMois(char DateMois1[50], char DateMois2[50]) {
 	renvoi : 0 si date1 > date2 ; 1 si date2 > date1 ; 2 si date1 = date2
 
 */
-int ComparerDates(char DateMois1[50], int DateJour1, char DateHeure1[50], int DateAnnee1,char DateMois2[50], int DateJour2, char DateHeure2[50], int DateAnnee2) {
+int ComparerDatesClient(char DateMois1[50], int DateJour1, char DateHeure1[50], int DateAnnee1,char DateMois2[50], int DateJour2, char DateHeure2[50], int DateAnnee2) {
 
   if(DateAnnee1 == DateAnnee2) {
     
@@ -440,7 +440,7 @@ void comparerBasesDepuisClient() {
 				  
 				}
 				// comparer si la date de maj est supérieure dans le client par rapport au serveur
-				else if(ComparerDates(DateMois, DateJour, DateHeure, DateAnnee, DateMois1, DateJour1, DateHeure1, DateAnnee1) == 0) {
+				else if(ComparerDatesClient(DateMois, DateJour, DateHeure, DateAnnee, DateMois1, DateJour1, DateHeure1, DateAnnee1) == 0) {
 				  // la comparaison des dates montre que la date niveau Client est > à la date Niveau Serveur
 				  // la dernière maj de l'obj est au niveau du client --> donc on doit faire cette maj au niveau serveur
 				   printf("L'objet : %s doit être téléchargé par le serveur pour une maj\n\n\n", nomChemin);
@@ -471,7 +471,7 @@ int main(void) {
 
 char *nom = "/home/melvin/PJ/base";
 char nomObj[50] = "/home/melvin/PJ/base/Sousrep";
-enregistrerBase(nom);
+enregistrerBaseClient(nom);
 
 //comparerBasesDepuisClient();
 
@@ -485,7 +485,7 @@ enregistrerBase(nom);
 
 printf("\nVos données seront enregistrées dans %s\n\n",nom);
 
-enregistrerBase(nom);
+enregistrerBaseClient(nom);
 
 printf("Veuillez choisir une option\n\n");
 printf("\n option 1 : Creer un fichier \n option 2 : Creer un dossier \n option 3 : Supprimer un fichier \n option 4 : Supprimer un dossier \n option autre : Quitter \n\n");
