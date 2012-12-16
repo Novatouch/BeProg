@@ -6,14 +6,14 @@
 #include <stdbool.h>
 
 /*
-  auteur : Lloret
+	auteur : Lloret
 	but : fonction récursive de parcours d'arborescence prend en paramètre un chemin d'arbo sur un dossier (avec droits en lecture)
 	paramètres : nom du chemin du dossier et fichier dans lequel enregistrer
 	renvoi : //
 
 */
 
-void parcours(char *nom, FILE* fichier);
+void parcoursClient(char *nom, FILE* fichier);
 
 
 /*
@@ -24,7 +24,7 @@ void parcours(char *nom, FILE* fichier);
 
 */
 
-void enregistrerBase(char *nom);
+void enregistrerBaseClient(char *nom);
 
 
 /*
@@ -44,7 +44,7 @@ int rechercherNomDansBaseServeur(char nom[50]);
 	renvoi : 0 si date1 > date2 ; 1 si date2 > date1 ; 2 si date1 = date2
 
 */
-int ComparerDates(char DateMois1[50], int DateJour1, char DateHeure1[50], int DateAnnee1,char DateMois2[50], int DateJour2, char DateHeure2[50], int DateAnnee2);
+int ComparerDatesClient(char DateMois1[50], int DateJour1, char DateHeure1[50], int DateAnnee1,char DateMois2[50], int DateJour2, char DateHeure2[50], int DateAnnee2);
 
 /*
 	auteur : Lloret
