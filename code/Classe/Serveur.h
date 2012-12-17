@@ -1,6 +1,6 @@
 #ifndef H_SERVEUR
 #define H_SERVEUR
-
+/*
 char *cheminRepertoireConfig;
 
 int initialisationConfiguration(char *cheminRepertoireConfig, config_traitement *configTrait);
@@ -16,5 +16,5 @@ int traitementSuppressionDossier(config_connex *configConexion, config_traitemen
 int traitementCreationFichier(config_connex *configConexion, config_traitement *configTrait, listeClient *liste);
 int traitementRecuperationFichier(config_connex *configConexion, config_traitement *configTrait, listeClient *liste);
 int traitementMiseAJour(config_connex *configConexion, config_traitement *configTrait, listeClient *liste);
-
+*/
 #endif
