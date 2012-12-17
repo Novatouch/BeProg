@@ -5,62 +5,141 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "message.h"
+#include "Message.h"
+#include "asprintf.h"
 
-struct s_info {
-char *number;
-char *id;
-char *size;
-char *name;
-char *sha1;
-char *date;
-char *path;
-char *user;
-};
 
-struct s_message {
-char *type;
-char *status;
-char *sessionid;
-char *user;
-};
+void initialisationStructureMessage(message *mess)
+{
+    mess->type = NULL;
+    mess->status = NULL;
+    mess->sessionid = -1;
+    mess->user = NULL;
+    mess->info.number = -1;
+    mess->info.id = -1;
+    mess->info.size = -1;
+    mess->info.name = NULL;
+    mess->info.sha1 = -1;
+    mess->info.date = NULL;
+    mess->info.path = NULL;
+    mess->info.user = NULL;
+}
 
 /* Message de la forme :
-  <message> 
-	<user>identidiant utilisateur</user> 
-	<sessionid>identifiant de la session</sessionid> 
-	<type>type de la requete</type> 
-	<status>status de la requête</status> 
-	<info> 
-		Les champs varieront en fonction de la nature de la requête 
-	</info> 
-  </message> 
+  <message>
+	<user>identidiant utilisateur</user>
+	<sessionid>identifiant de la session</sessionid>
+	<type>type de la requete</type>
+	<status>status de la requête</status>
+	<info>
+		Les champs varieront en fonction de la nature de la requête
+	</info>
+  </message>
 */
-  
-  
+
+
 /*
-	auteur : Lloret
+	auteur : GAUTIER Philippe
 	but : mettre une structure message sous forme de String
 	paramètres : message
 	renvoi : string en paramètre (chaine)
 
 */
 
-void toString(message mess, char chaine[1024])
+int toString(message *mess, unsigned char **chaine)
 {
-  
-  strcpy(chaine, "<message> <user>");
-  strcat(chaine, mess.user);/*On ajoute le champs user à la chaîne grâce à la fonction strcat*/
-  strcat(chaine, "</user> <sessionid>"); /*on sépare les champs par un espace*/
-  strcat(chaine, mess.sessionid);
-  strcat(chaine, "</sessionid> <type>");
-  strcat(chaine, mess.type);
-  strcat(chaine, "</type> <status>");
-  strcat(chaine, mess.status);
-  strcat(chaine, "</status> </message>");
-  
-  //printf("%s\n", chaine);
-  
+    // document pointer
+    xmlDocPtr doc = NULL;
+    xmlNodePtr root_node = NULL, node_info = NULL;//user = NULL, type = NULL, status = NULL, info = NULL;/* node pointers */
+    int *taille = NULL;
+
+    printf("user: %s", mess->user);
+
+    if( (mess->user != NULL) || (mess->sessionid != -1) || (mess->type != NULL) || (mess->status != NULL) ){
+        // création d'un nouveau document
+        doc = xmlNewDoc(BAD_CAST "1.0");
+        root_node = xmlNewNode(NULL, BAD_CAST "message");
+        xmlDocSetRootElement(doc, root_node);
+
+        // test de l'existence des variables user, type, status, ... dans la structure et ajout de la node
+
+        if(mess->user != NULL){
+
+            xmlNewChild(root_node, NULL, BAD_CAST "user", BAD_CAST mess->user);
+        }
+
+        if(mess->sessionid != -1){
+
+            xmlNewChild(root_node, NULL, BAD_CAST "sessionid", xmlXPathCastNumberToString(mess->sessionid));
+        }
+
+        if(mess->type != NULL){
+
+
+            xmlNewChild(root_node, NULL, BAD_CAST "type", BAD_CAST mess->type);
+        }
+
+        if(mess->status != NULL){
+
+            xmlNewChild(root_node, NULL, BAD_CAST "status", BAD_CAST mess->status);
+        }
+
+        if( (mess->info.number != -1) || (mess->info.id != -1) || (mess->info.size != -1) || (mess->info.name != NULL) || (mess->info.sha1 != -1) || (mess->info.date != NULL) || (mess->info.path != NULL) || (mess->info.user != NULL)) {
+
+            node_info = xmlNewNode(NULL, BAD_CAST "info");
+            xmlAddChild	(root_node, node_info);
+
+            if(mess->info.number != -1){
+
+                xmlNewChild(node_info, NULL, BAD_CAST "number", xmlXPathCastNumberToString(mess->info.number));
+            }
+
+            if(mess->info.id != -1){
+
+                xmlNewChild(node_info, NULL, BAD_CAST "id", xmlXPathCastNumberToString(mess->info.id ));
+            }
+
+            if(mess->info.size != -1){
+
+                xmlNewChild(node_info, NULL, BAD_CAST "size", xmlXPathCastNumberToString(mess->info.size));
+            }
+
+            if(mess->info.sha1 != -1){
+
+                xmlNewChild(node_info, NULL, BAD_CAST "sha1", xmlXPathCastNumberToString(mess->info.sha1));
+            }
+
+            if(mess->info.name != NULL){
+
+                xmlNewChild(node_info, NULL, BAD_CAST "name", BAD_CAST mess->info.name);
+            }
+
+            if(mess->info.date != NULL){
+
+                xmlNewChild(node_info, NULL, BAD_CAST "date", BAD_CAST mess->info.date);
+            }
+
+            if(mess->info.path != NULL){
+
+                xmlNewChild(node_info, NULL, BAD_CAST "path", BAD_CAST mess->info.path);
+            }
+
+            if(mess->info.user != NULL){
+
+                xmlNewChild(node_info, NULL, BAD_CAST "user", BAD_CAST mess->info.user);
+            }
+        }
+    }
+
+    // enegistrement dans une chaine de caractère
+    xmlDocDumpMemory(doc, chaine,taille);
+
+    // libération mémoire
+
+    xmlFreeDoc(doc);
+    xmlCleanupParser();
+
+    return 0;
 }
 
 /*
@@ -71,180 +150,4 @@ void toString(message mess, char chaine[1024])
 
 */
 
-void determinerUser(char message[1024], char user[20]) {
-  
 
-  int i = 0;
-  int j = 0;
-  int k = 0;
-  int l = 0;
-
-
-  for(j = 0 ; message[j] = ' ' ; j++) { // on atteint le premier espace
-	for (i=j ; message[i] = '>'; i++) { // on atteint le > de <user>
-	    for(k=i+1 ; message[k] != '<' ; k++) { //on va jusqu'au < de </user>
-		user[l] = message[k];
-		l++;
-	    }
-	}
-  }
-  
-}
-
-/*
-	auteur : Lloret
-	but : trouver l'id Session dans le message
-	paramètres : message
-	renvoi : string en paramètre (sessionid)
-
-*/
-
-void determinerSessionid(char message[1024], char sessionid[20]) {
-  
-  int i = 0;
-  int j = 0;
-  int k = 0;
-  int l = 0;
-  int a = 0;
-
-
-  for(j = 0 ; message[j] != ' ' ; j++) { // on atteint le premier espace
-	for (i=j+1 ; message[i] = ' '; i++) { // on atteint le 2e espace
-	    for(k=i ; message[k] = '>' ; k++) { //on atteint le > de <sessionid>
-		for(a=k+1 ; message[a] != '<' ; a++) { //on va jusqu'au < de </sessionid>
-		  sessionid[l] = message[a];
-		  l++;
-		}
-	    }
-	}
-  }
-  
-} 
-  
-/*
-	auteur : Lloret
-	but : trouver le type dans le message
-	paramètres : message
-	renvoi : string en paramètre (type)
-
-*/
-
-void determinerType(char message[1024], char type[20]) {
- 
-  int i = 0;
-  int j = 0;
-  int k = 0;
-  int l = 0;
-  int a = 0;
-  int b = 0;
-
-
-  for(j = 0 ; message[j] != ' ' ; j++) { // on atteint le premier espace
-	for (i=j+1 ; message[i] = ' '; i++) { // on atteint le 2e espace
-	    for(k=i+1 ; message[k] = ' ' ; k++) { //on atteint le 3e espace
-		for(a=k ; message[a] = '>' ; a++) { //on atteint le > de <type>
-		    for(b=a+1; message[b] != '<'; b++) { //on va jusqu'au < de </type>
-			type[l] = message[b];
-			l++;
-		    }
-		}
-	    }
-	}
-  }
-  
-  
-}
-
-/*
-	auteur : Lloret
-	but : trouver le status dans le message
-	paramètres : message
-	renvoi : string en paramètre (status)
-
-*/
-
-void determinerStatus(char message[1024], char status[20]) {
-  
-  int i = 0;
-  int j = 0;
-  int k = 0;
-  int l = 0;
-  int a = 0;
-  int b = 0;
-  int c = 0;
-
-
-  for(j = 0 ; message[j] != ' ' ; j++) { // on atteint le premier espace
-	for (i=j+1 ; message[i] = ' '; i++) { // on atteint le 2e espace
-	    for(k=i+1 ; message[k] = ' ' ; k++) { //on atteint le 3e espace
-		for(a=k+1 ; message[a] = ' ' ; a++) { //on atteint le 4e espace
-		    for(b=a; message[b] = '>'; b++) { //on atteint le > de <status>
-			for(c=b+1 ; message[c] != '<'; c++) { //on va jusqu'au < de </status>
-			    status[l] = message[c];
-			    l++;
-			}
-		    }
-		}
-	    }
-	}
-  }
-  
-  
-  
-}
-
-/*
-	auteur : Lloret
-	but : mettre un String sous forme de structure message
-	paramètres : message
-	renvoi : string
-
-*/
-
-message decodeMessage(char message[1024])
-{
-  struct s_message mess;
-  char type[20] = "";
-  char status[20] = "";
-  char sessionid[20] = "";
-  char user[20] = "";
-  printf("razaztaat");
-  
-  determinerUser(message,user);/*
-  strcpy(mess.user,user);
-  
-  determinerSessionid(message,sessionid);
-  strcpy(mess.sessionid,sessionid);
-  
-  determinerType(message,type);
-  strcpy(mess.type,type);
-  
-  determinerStatus(message,status);
-  strcpy(mess.status,status);*/
-
-  
-  return(mess);
-  
-}
-/*
-int main(void) {
-  
-  message m;
-  char chaine[1024];
-  char user[10];
-
-  m.user = "user";
-  m.sessionid = "sessionid";
-  m.status = "status";
-  m.type = "type";
-  
-  toString(m,chaine);
-  printf("%s\n\n",chaine);
-  
-  decodeMessage(chaine);
-
-  
-  return(0);
-}
-
-*/
