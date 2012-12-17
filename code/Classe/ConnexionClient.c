@@ -1,140 +1,88 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <unistd.h>
-#include <ctype.h>
-#include <netdb.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/select.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <errno.h>
 
-#include "client.h"
 
-#define LONGUEUR_TAMPON 4096
+#include "ConnexionClient.h"
 
-/* Variables cachees */
+/*
+	auteur : Philippe GAUTIER
+	but : Création Socket et connexion au serveur
+	paramètres : struct config_connex, hostname le nom du serveur, le port
+	renvoi : 0 OK 1 NOK
+*/
 
-/* le socket client */
-int socketClient;
-/* le tampon de reception */
-char tamponClient[LONGUEUR_TAMPON];
-int debutTampon;
-int finTampon;
+int connexionServeur(config_connex *config, char *hostname, int port)
+{
+    config->hostinfo = NULL;
+    //config->sin = { 0 };
 
-/* Initialisation.
- * Connexion au serveur sur la machine donnee.
- * Utilisez localhost pour un fonctionnement local.
- */
-int Initialisation(char *host) {
-  return InitialisationAvecService(host, "80");
-}
+    // initialisation socket
+    config->socket = socket(AF_INET, SOCK_STREAM, 0);
+    if(config->socket == -1){
+        perror("socket()");
+        return 1;
+    }
 
-/* Initialisation.
- * Connexion au serveur sur la machine donnee et au service donne.
- * Utilisez localhost pour un fonctionnement local.
- */
-int InitialisationAvecService(char *host, char *service) {
-	int n;
-	struct addrinfo	hints, *res, *ressave;
+    config->hostinfo  = gethostbyname(hostname); /* on récupère les informations de l'hôte auquel on veut se connecter */
 
-	bzero(&hints, sizeof(struct addrinfo));
-	hints.ai_family = AF_UNSPEC;
-	hints.ai_socktype = SOCK_STREAM;
+    /* l'hôte n'existe pas */
+    if (config->hostinfo == NULL) {
+        fprintf (stderr, "hote inconnu host %s.\n", hostname);
+        return 1;
+    }
 
-	if ( (n = getaddrinfo(host, service, &hints, &res)) != 0)  {
-     		fprintf(stderr, "Initialisation, erreur de getaddrinfo : %s", gai_strerror(n));
-     		return 0;
-	}
-	ressave = res;
+    config->sin.sin_addr = *(struct in_addr *) config->hostinfo->h_addr; /* l'adresse se trouve dans le champ h_addr de la structure hostinfo */
+    config->sin.sin_port = htons(port); /* on utilise htons pour le port */
+    config->sin.sin_family = AF_INET;
 
-	do {
-		socketClient = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-		if (socketClient < 0)
-			continue;	/* ignore this one */
 
-		if (connect(socketClient, res->ai_addr, res->ai_addrlen) == 0)
-			break;		/* success */
+    if(connect(config->socket,(struct sockaddr *) &config->sin, sizeof(struct sockaddr)) == -1){
+        perror("connect()");
+        return 1;
+    }
 
-		close(socketClient);	/* ignore this one */
-	} while ( (res = res->ai_next) != NULL);
-
-	if (res == NULL) {
-     		perror("Initialisation, erreur de connect.");
-     		return 0;
-	}
-
-	freeaddrinfo(ressave);
-	printf("Connexion avec le serveur reussie.\n");
-
-	return 1;
-}
-
-/* Recoit un message envoye par le serveur.
- */
-char *Reception() {
-	char message[LONGUEUR_TAMPON];
-	int index = 0;
-	int fini = false;
-	int retour = 0;
-	while(!fini) {
-		/* on cherche dans le tampon courant */
-		while((finTampon > debutTampon) && 
-			(tamponClient[debutTampon]!='\n')) {
-			message[index++] = tamponClient[debutTampon++];
-		}
-		/* on a trouve ? */
-		if (tamponClient[debutTampon]=='\n') {
-			message[index++] = '\n';
-			message[index] = '\0';
-			debutTampon++;
-			fini = true;
-			return strdup(message);
-		} else {
-			/* il faut en lire plus */
-			debutTampon = 0;
-			retour = recv(socketClient, tamponClient, LONGUEUR_TAMPON, 0);
-			if (retour < 0) {
-				perror("Reception, erreur de recv.");
-				return NULL;
-			} else if(retour == 0) {
-				fprintf(stderr, "Reception, le serveur a ferme la connexion.\n");
-				return NULL;
-			} else {
-				/*
-				 * on a recu "retour" octets
-				 */
-				finTampon = retour;
-			}
-		}
-	}
-	return NULL;
-}
-
-/* Envoie un message au serveur.
- * Attention, le message doit etre termine par \n
- */
-int Emission(char *message) {
-	if(strstr(message, " ") == NULL) {
-		fprintf(stderr, "Emission, Le message n'est pas termine par un espace.\n");
-	}
-
-        
-	int taille = strlen(message);
-	if (send(socketClient, message, taille,0) == -1) {
-        perror("Emission, probleme lors du send.");
-        return 0;
-	}
-	printf("Emission de %d caracteres.\n", taille+1);
-	return 1;
+    return 0;
 }
 
 
-/* Ferme la connexion.
- */
-void Terminaison() {
-	close(socketClient);
+/*
+	auteur : Philippe GAUTIER
+	but : Création Socket et connexion au serveur
+	paramètres : struct config_connex, message à envoyer
+	renvoi : 0 OK 1 NOK
+*/
+int envoiRequete(config_connex *config, char *message)
+{
+    // vérification longeur requête
+    if(strlen(message) > TAILLE_BUFFER){
+        printf ("Longeur message trop grand.\n");
+        return 1;
+    }
+
+    if(send(config->socket, message, strlen(message), 0) < 0){
+        printf ("Erreur lors de l'envoi de donnée.\n");
+        return 1;
+    }
+
+    return 0;
+}
+
+int receptionRequete(config_connex *config, char *message)
+{
+
+    int n;
+
+    if( (n = read(config->socket, message, TAILLE_BUFFER-1)) < 0){
+        printf("Erreur réception message\n");
+        return 1;
+    }
+
+    message[n] = '\0';
+
+    return 0;
+}
+
+int fermetureConnexion(config_connex *config)
+{
+    close(config->socket);
+
+    return 0;
 }

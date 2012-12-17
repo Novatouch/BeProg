@@ -1,46 +1,53 @@
-#ifndef __CLIENT_H__
-#define __CLIENT_H__
+#ifndef __CLIENTCONNECTION_H__
+#define __CLIENTCONNECTION_H__
 
-/* Initialisation.
- * Connexion au serveur sur la machine donnee.
- * Utilisez localhost pour un fonctionnement local.
- * renvoie 1 si a c'est bien pass 0 sinon
- */
-int Initialisation(char *machine);
 
-/* Initialisation.
- * Connexion au serveur sur la machine donnee et au service donne.
- * Utilisez localhost pour un fonctionnement local.
- * renvoie 1 si a c'est bien pass 0 sinon
- */
-int InitialisationAvecService(char *machine, char *service);
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <unistd.h>
+#include <ctype.h>
+#include <netdb.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/select.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <errno.h>
 
-/* Recoit un message envoye par le serveur.
- * retourne le message ou NULL en cas d'erreur.
- * Note : il faut liberer la memoire apres traitement.
- */
-char *Reception();
 
-/* Envoie un message au serveur.
- * Attention, le message doit etre termine par \n
- * renvoie 1 si a c'est bien pass 0 sinon
- */
-int Emission(char *message);
+// déclaration des types basiques
+#include <sys/types.h>
+// constantes concernant les domaines, les types et les protocoles
+#include <sys/socket.h>
+// constantes et structures propres au domaine INTERNET
+#include <netinet/in.h>
+// structures utilisées par les primitives de gestion de la base de données réseau
+#include <netdb.h>
+#include <arpa/inet.h>
+// pour fonction memset
+#include <string.h>
+#include <unistd.h>
 
-/* Recoit des donnees envoyees par le serveur.
- * renvoie le nombre d'octets reus, 0 si la connexion est ferme,
- * un nombre ngatif en cas d'erreur
- */
-int ReceptionBinaire(char *donnees, size_t tailleMax);
+#define MYPORT 20000
+#define TAILLE_BUFFER 300
 
-/* Envoie des donnes au serveur en prcisant leur taille.
- * renvoie le nombre d'octets envoys, 0 si la connexion est ferme,
- * un nombre ngatif en cas d'erreur
- */
-int EmissionBinaire(char *donnees, size_t taille);
 
-/* Ferme la connexion.
- */
-void Terminaison();
+
+
+typedef struct config_connex{
+    int socket;
+    struct hostent *hostinfo;
+    struct sockaddr_in sin;
+    int port;
+}config_connex;
+
+int connexionServeur(config_connex *config, char *hostname, int port);
+int envoiRequete(config_connex *config, char *message);
+int receptionRequete();
+//int envoiBinaire();
+//int receptionBinaire();
+int fermetureConnexion(config_connex *config);
 
 #endif
