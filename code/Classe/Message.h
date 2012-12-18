@@ -18,7 +18,6 @@ typedef struct s_info {
     int sha1;
     char *date;
     char *path;
-    char *user;
 } s_info;
 
 typedef struct s_message {
@@ -29,8 +28,13 @@ typedef struct s_message {
     s_info info;
 } message;
 
+
+
 void initialisationStructureMessage(message *mess);
-int toString(message *mess, unsigned char **chaine);
-message decodeMessage(char message[1024]);
+int toString(message *mess, char **chaine);
+int rechercherNombre(int *nombre, char *recherche, xmlXPathContextPtr *ctxt);
+int rechercherChaine(char **chaine, char *recherche, xmlXPathContextPtr *ctxt);
+int decodeMessage( char *chaine, message *message);
+
 
 #endif

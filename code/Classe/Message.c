@@ -8,6 +8,13 @@
 #include "Message.h"
 #include "asprintf.h"
 
+/*
+	auteur : GAUTIER Philippe
+	but : intitialisation de la structure. Permet de savoir si les variables sont vides ou si elles contiennent des variables.
+	paramètres : structure message
+	renvoi : string en paramètre (chaine)
+
+*/
 
 void initialisationStructureMessage(message *mess)
 {
@@ -22,8 +29,8 @@ void initialisationStructureMessage(message *mess)
     mess->info.sha1 = -1;
     mess->info.date = NULL;
     mess->info.path = NULL;
-    mess->info.user = NULL;
 }
+
 
 /* Message de la forme :
   <message>
@@ -46,22 +53,23 @@ void initialisationStructureMessage(message *mess)
 
 */
 
-int toString(message *mess, unsigned char **chaine)
+int toString(message *mess, char **chaine)
 {
-    // document pointer
+    // pointeur de node xml
     xmlDocPtr doc = NULL;
-    xmlNodePtr root_node = NULL, node_info = NULL;//user = NULL, type = NULL, status = NULL, info = NULL;/* node pointers */
+    xmlNodePtr root_node = NULL, node_info = NULL;
     int *taille = NULL;
+    xmlChar *ch;
 
-    printf("user: %s", mess->user);
 
+    //teste l'existence d'au mons une de ces variables
     if( (mess->user != NULL) || (mess->sessionid != -1) || (mess->type != NULL) || (mess->status != NULL) ){
         // création d'un nouveau document
         doc = xmlNewDoc(BAD_CAST "1.0");
         root_node = xmlNewNode(NULL, BAD_CAST "message");
         xmlDocSetRootElement(doc, root_node);
 
-        // test de l'existence des variables user, type, status, ... dans la structure et ajout de la node
+        // test de l'existence des variables user, type, status, ... dans la structure et ajout de la node si elle existe
 
         if(mess->user != NULL){
 
@@ -84,7 +92,8 @@ int toString(message *mess, unsigned char **chaine)
             xmlNewChild(root_node, NULL, BAD_CAST "status", BAD_CAST mess->status);
         }
 
-        if( (mess->info.number != -1) || (mess->info.id != -1) || (mess->info.size != -1) || (mess->info.name != NULL) || (mess->info.sha1 != -1) || (mess->info.date != NULL) || (mess->info.path != NULL) || (mess->info.user != NULL)) {
+        // même principe que plus haut
+        if( (mess->info.number != -1) || (mess->info.id != -1) || (mess->info.size != -1) || (mess->info.name != NULL) || (mess->info.sha1 != -1) || (mess->info.date != NULL) || (mess->info.path != NULL) ) {
 
             node_info = xmlNewNode(NULL, BAD_CAST "info");
             xmlAddChild	(root_node, node_info);
@@ -123,19 +132,17 @@ int toString(message *mess, unsigned char **chaine)
 
                 xmlNewChild(node_info, NULL, BAD_CAST "path", BAD_CAST mess->info.path);
             }
-
-            if(mess->info.user != NULL){
-
-                xmlNewChild(node_info, NULL, BAD_CAST "user", BAD_CAST mess->info.user);
-            }
         }
     }
 
     // enegistrement dans une chaine de caractère
-    xmlDocDumpMemory(doc, chaine,taille);
+    xmlDocDumpMemory(doc, &ch,taille);
 
+    asprintf(chaine, "%s", ch);
     // libération mémoire
 
+    xmlUnlinkNode(root_node);
+    xmlFreeNode(root_node);
     xmlFreeDoc(doc);
     xmlCleanupParser();
 
@@ -143,11 +150,180 @@ int toString(message *mess, unsigned char **chaine)
 }
 
 /*
-	auteur : Lloret
+	auteur : Gautier
+	but : Fonction permettant de faire une recherche sur une chaine dans un arbre XML DOM
+	paramètres : pointeur sur int, chaine de recherche, context de recherche Xpath
+	renvoi : 0 ok 1 NOK
+
+*/
+
+
+int rechercherChaine(char **chaine, char *recherche, xmlXPathContextPtr *ctxt)
+{
+    xmlXPathObjectPtr xpathRes;
+    xmlNodePtr node_recherche;
+
+    xpathRes = xmlXPathEvalExpression(BAD_CAST recherche, *ctxt);
+    if( xpathRes == NULL){
+        return 1;
+    }
+    // si la requête Xpath a bien retournée des nodes
+    if (xpathRes->type != XPATH_NODESET){
+
+        return 1;
+    }
+    // vérifie que plus d'une seule node à été trouvée
+    if(xpathRes->nodesetval->nodeNr != 1){
+        return 0;
+    }
+
+    // recuperation de la valeur
+    node_recherche = xpathRes->nodesetval->nodeTab[0];
+
+    // recuperation de la chaine
+    asprintf(chaine, "%s", xmlXPathCastNodeToString(node_recherche) );
+
+    return 0;
+}
+
+/*
+	auteur : Gautier
+	but : Fonction permettant de faire une recherche sur un nombre dans un arbre XML DOM
+	paramètres : pointeur sur int, chaine de recherche, context de recherche Xpath
+	renvoi : 0 ok 1 NOK
+
+*/
+
+int rechercherNombre(int *nombre, char *recherche, xmlXPathContextPtr *ctxt)
+{
+    xmlXPathObjectPtr xpathRes;
+    xmlNodePtr node_recherche;
+
+    xpathRes = xmlXPathEvalExpression(BAD_CAST recherche, *ctxt);
+    if(xpathRes == NULL){
+        return 1;
+    }
+    // si la requête Xpath a bien retournée des nodes
+    if(xpathRes->type != XPATH_NODESET){
+        return 1;
+    }
+    // vérifie que plus d'une seule node à été trouvée
+    if(xpathRes->nodesetval->nodeNr != 1){
+
+        return 0;
+    }
+
+
+    // recuperation de la valeur
+    node_recherche = xpathRes->nodesetval->nodeTab[0];
+
+    // recuperation de la chaine
+    *nombre = (int) (xmlXPathCastStringToNumber(xmlXPathCastNodeToString(node_recherche)));
+
+    return 0;
+}
+
+
+/*
+	auteur : Lloret et Gautier
 	but : trouver l'id User dans le message
 	paramètres : message
 	renvoi : string en paramètre (user)
 
 */
+
+int decodeMessage(char *chaine, message *message)
+{
+
+    xmlDocPtr doc;
+    xmlNodePtr root_node;
+
+    // contexte Xpath
+    xmlXPathContextPtr ctxt;
+
+
+
+    // créer un arbre DOM à partir de la chaine
+    doc = xmlParseMemory(chaine, strlen(chaine));
+
+    if (doc == NULL) {
+        fprintf(stderr, "requete XML invalide\n");
+        return 1;
+    }
+    // Récupération de la racine
+    root_node = xmlDocGetRootElement(doc);
+
+    if (root_node == NULL) {
+        fprintf(stderr, "Document XML vierge\n");
+        xmlFreeDoc(doc);
+        return 1;
+    }
+
+    // initialisation Xpath
+    xmlXPathInit();
+    ctxt = xmlXPathNewContext(doc);
+
+    if ( ctxt == NULL){
+        // initialisation complète
+        fprintf(stderr, "Problème contexte Xpath\n");
+        return 1;
+    }
+
+
+    if( (rechercherChaine(&message->user, "/message/user", &ctxt)) != 0){
+        return 1;
+    }
+
+    if( (rechercherChaine(&message->status, "/message/status", &ctxt)) != 0){
+        return 1;
+    }
+
+    if( (rechercherChaine(&message->type, "/message/type", &ctxt)) != 0){
+        return 1;
+    }
+
+
+    if( (rechercherNombre(&message->sessionid, "/message/sessionid", &ctxt)) != 0){
+        return 1;
+    }
+
+    if( (rechercherNombre(&message->info.number, "/message/info/number", &ctxt)) != 0){
+        return 1;
+    }
+
+    if( (rechercherNombre(&message->info.id, "/message/info/id", &ctxt)) != 0){
+        return 1;
+    }
+
+    if( (rechercherNombre(&message->info.size, "/message/info/size", &ctxt)) != 0){
+        return 1;
+    }
+
+    if( (rechercherNombre(&message->info.sha1, "/message/info/sha1", &ctxt)) != 0){
+        return 1;
+    }
+
+    if( (rechercherChaine(&message->info.name, "/message/info/name", &ctxt)) != 0){
+        return 1;
+    }
+
+    if( (rechercherChaine(&message->info.date, "/message/info/date", &ctxt)) != 0){
+        return 1;
+    }
+
+    if( (rechercherChaine(&message->info.path, "/message/info/path", &ctxt)) != 0){
+        return 1;
+    }
+
+    // récupération des valeur des différents champs d'un message
+
+    // libération mémoire
+    xmlUnlinkNode(root_node);
+    xmlFreeNode(root_node);
+    xmlFreeDoc(doc);
+    xmlCleanupParser();
+
+    return 0;
+}
 
 
