@@ -99,8 +99,8 @@ int envoiMessage(config_connex *config, char *message)
 
 int receptionMessage(config_connex *config, char *message)
 {
-    if (( message = malloc(TAILLE_BUFFER)) == NULL)
-        return 1;
+    //if (( message = malloc(TAILLE_BUFFER)) == NULL)
+    //    return 1;
 
 
     if(recv(config->sockd_com, message, TAILLE_BUFFER, 0) < 0)
@@ -116,7 +116,7 @@ int receptionMessage(config_connex *config, char *message)
 int envoiBinaire(config_connex *config, char *message, size_t taille)
 {
 
-    if( write(config->sockd_com, message, taille) == -1)
+    if( send(config->sockd_com, message, taille, 0) == -1)
     {
         printf("Erreur envoi Fichier\n");
         return 1;
@@ -132,7 +132,7 @@ int receptionBinaire(config_connex *config, char **message, size_t taille)
         return 1;
 
 
-    if(read(config->sockd_com, message, taille) == -1)
+    if(recv(config->sockd_com, message, taille, 0) == -1)
     {
         printf("Erreur réception Fichier\n");
         return 1;

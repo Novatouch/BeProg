@@ -1,11 +1,15 @@
 #ifndef H_SERVEUR
 #define H_SERVEUR
-/*
-char *cheminRepertoireConfig;
 
-int initialisationConfiguration(char *cheminRepertoireConfig, config_traitement *configTrait);
-int demarrageServer(config_connex *configConexion);
-int ecouteRequete(config_connex *configConexion);
+
+#include "Message.h"
+#include "ConnexionServeur.h"
+
+//int initialisationConfiguration(char *cheminRepertoireConfig, config_traitement *configTrait);
+//int demarrageServer(config_connex *configConexion);
+//int ecouteRequete(config_connex *configConexion);
+int traitementRequete(char *chaine);
+/*
 int traitementSynchronisation(config_connex *configConexion, config_traitement *configTrait, listeClient *liste);
 int traitementCreationFichier(config_connex *configConexion, config_traitement *configTrait, listeClient *liste);
 int traitementSuppressionFichier(config_connex *configConexion, config_traitement *configTrait, listeClient *liste);

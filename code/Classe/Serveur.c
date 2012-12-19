@@ -1,4 +1,33 @@
 #include "ConnexionServeur.h"
+#include "Message.h"
+#include "Serveur.h"
+/*
+	auteur : Philippe GAUTIER
+	but : faire le traitement de la chaine de caractère recu par le serveur
+	paramètres : chaine de caratère
+	renvoi : 0 OK 1 NOK
+*/
+
+int traitementRequete(char *chaine)
+{
+    message requete_recu;
+
+    if( (decodeMessage(chaine, &requete_recu)) != 0){
+
+        printf("Une erreur s'est produite, message undécodable");
+        return 1;
+    }
+
+    printf("user : %s", requete_recu.user);
+
+    // orientation vers la bonne fonction de traitement
+    return 0;
+}
+
+
+
+
+
 /*
 	auteur :
 	but :
@@ -18,11 +47,11 @@ int initialisationConfiguration(char *cheminRepertoireConfig, config_traitement 
 	renvoi :
 
 */
-
+/*
 int demarrageServer(config_connex *configConexion)
 {
 }
-
+*/
 /*
 	auteur :
 	but :
@@ -30,11 +59,11 @@ int demarrageServer(config_connex *configConexion)
 	renvoi :
 
 */
-
+/*
 int ecouteRequete(config_connex *configConexion)
 {
 }
-
+*/
 /*
 	auteur :
 	but :

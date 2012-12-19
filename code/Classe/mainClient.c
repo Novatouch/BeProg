@@ -12,8 +12,20 @@ int main()
 {
 
 	pid_t pid;
-
+	config_connex connex_permanente, connex_temporaire;
+	config_client configClient;
 	pid = fork();
+	
+	initialiserConnexion(&connex_permanente);
+	initialiserConnexion(&connex_temporaire);
+
+
+	
+
+	if( (initialisationConfiguration("/config/path")) != 0)
+	{
+		return 1;
+	}
 
 	if (pid == -1) {
 
@@ -28,12 +40,31 @@ int main()
 
 		//code du fils
 		printf("processus FILS >>>> fork\n");
+		if( (authentificationAvecServeur(configClient, connex_permanente) != 0){
+			return 1;
+		}
+		
+		if( (surveillerMessagePushServeur(configClient, connex_permanente) != 0){
+			return 1;
+		}
 	}
 	else{
 
 		//code du père
 		printf("processus PERE >>>> fork\n");
-	}
+
+		if( (synchroniserAvecServeur(configClient, connex_temporaire) != 0){
 		
+			return 0;
+		}
+	}
+
+	return 0;
+}
+
+{
+	return 0;
+}
+
 	return 0;
 }

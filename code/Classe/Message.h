@@ -9,7 +9,6 @@
 #include <libxml/xpath.h>
 
 
-
 typedef struct s_info {
     int number;
     int id;
