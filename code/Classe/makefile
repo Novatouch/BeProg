@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall
+CFLAGS=-Wall -W -pedantic
 EXEC=programme
 all :$(EXEC)
 asprintf.o : asprintf.h asprintf.c
